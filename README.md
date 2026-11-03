@@ -1,21 +1,32 @@
-# Next.js template
+# AirEcho website
 
-This is a Next.js template with shadcn/ui.
+The AirEcho website introduces the app and links to current Linux, macOS, and
+Android downloads. Download links and counts are retrieved from the public
+GitHub Releases API.
 
-## Adding components
+## Development
 
-To add components to your app, run the following command:
+Install dependencies and start the development server:
 
 ```bash
-npx shadcn@latest add button
+bun install
+bun run dev
 ```
 
-This will place the ui components in the `components` directory.
+Useful checks:
 
-## Using components
-
-To use the components in your app, import them as follows:
-
-```tsx
-import { Button } from "@/components/ui/button";
+```bash
+bun run typecheck
+bun run lint
+bun run build
 ```
+
+## GitHub downloads
+
+The site reads release data through its server-side `/api/downloads` route. An
+optional `GITHUB_API_TOKEN` can be configured in the deployment environment to
+increase the GitHub API rate limit. The site also works without a token because
+the release repository is public.
+
+See [docs/GITHUB-API.md](./docs/GITHUB-API.md) for the endpoint response,
+platform asset matching, caching, and operational notes.
