@@ -6,7 +6,6 @@ import {
   ArrowUpRight,
   Check,
   Clipboard,
-  File,
   FolderDown,
   Laptop,
   LockKeyhole,
@@ -19,6 +18,7 @@ import {
 import { buttonVariants } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { DownloadSection } from "@/components/download-section"
+import { ShowcasePlayer, type ShowcaseDemo } from "@/components/showcase-player"
 import {
   Card,
   CardContent,
@@ -75,7 +75,36 @@ const steps = [
   },
 ]
 
-const showcaseDemos = [
+const supportedPlatforms = [
+  { name: "Linux", logo: "/assets/platforms/linux.png" },
+  { name: "macOS", logo: "/assets/platforms/macos.png" },
+  { name: "Android", logo: "/assets/platforms/android.png" },
+]
+
+const platformCards = [
+  {
+    icon: Laptop,
+    title: "Desktop",
+    description: "Linux & macOS",
+    items: [
+      "Clipboard sync across devices",
+      "Send files from your desktop",
+      "Quiet tray menu and notifications",
+    ],
+  },
+  {
+    icon: Smartphone,
+    title: "Android",
+    description: "Android 10 and newer",
+    items: [
+      "Quick Settings tile to receive",
+      "Share menu to send text and files",
+      "Keeps listening in the background",
+    ],
+  },
+]
+
+const showcaseDemos: ShowcaseDemo[] = [
   {
     label: "MIUI · QUICK SETTINGS",
     title: "Keep AirEcho one swipe away",
@@ -84,7 +113,7 @@ const showcaseDemos = [
     video: "/assets/clips/demo-1.mp4",
     poster: "/assets/showcase/miui-quick-settings.webp",
     alt: "MIUI Quick Settings with AirEcho enabled and waiting to receive",
-    aspectRatio: "1 / 2",
+    screenRatio: 2,
   },
   {
     label: "MIUI · SHARE MENU",
@@ -94,7 +123,7 @@ const showcaseDemos = [
     video: "/assets/clips/demo-2.mp4",
     poster: "/assets/showcase/miui-share-menu.webp",
     alt: "MIUI share menu showing AirEcho as an option for selected text",
-    aspectRatio: "1 / 2",
+    screenRatio: 2,
   },
   {
     label: "SAMSUNG ONE UI · QUICK SETTINGS",
@@ -104,7 +133,7 @@ const showcaseDemos = [
     video: "/assets/clips/demo-3.mp4",
     poster: "/assets/showcase/samsung-quick-settings.webp",
     alt: "Samsung One UI Quick Settings editor with AirEcho available as a tile",
-    aspectRatio: "18 / 39",
+    screenRatio: 39 / 18,
   },
   {
     label: "SAMSUNG ONE UI · RECEIVING",
@@ -114,7 +143,7 @@ const showcaseDemos = [
     video: "/assets/clips/demo-4.mp4",
     poster: "/assets/showcase/samsung-receiving.webp",
     alt: "Samsung One UI notification showing AirEcho waiting for files over Wi-Fi",
-    aspectRatio: "18 / 39",
+    screenRatio: 39 / 18,
   },
 ]
 
@@ -135,8 +164,8 @@ export default function Page() {
           </Link>
 
           <nav className="desktop-nav" aria-label="Main navigation">
-            <Link href="#how-it-works">How it works</Link>
             <Link href="#features">Why AirEcho</Link>
+            <Link href="#how-it-works">How it works</Link>
             <Link href="#in-action">In action</Link>
             <Link href="#downloads">Downloads</Link>
             <Link href="#platforms">Platforms</Link>
@@ -169,7 +198,7 @@ export default function Page() {
                 <span>Paste there.</span>
               </h1>
               <p className="hero-description">
-                Text and files move between your devices over the same Wi-Fi. No
+                Text and files move between your devices over the same Wi‑Fi. No
                 account, no cloud storage, no cable.
               </p>
 
@@ -200,14 +229,17 @@ export default function Page() {
                 </span>
                 <span>
                   <Check aria-hidden="true" />
-                  Linux, macOS &amp; Android
+                  Open source
                 </span>
               </div>
             </div>
 
             <div className="hero-visual" aria-label="AirEcho product preview">
-              <div className="visual-orbit orbit-one" aria-hidden="true" />
-              <div className="visual-orbit orbit-two" aria-hidden="true" />
+              <div className="visual-echo" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
 
               <div className="desktop-window">
                 <div className="window-bar">
@@ -251,6 +283,7 @@ export default function Page() {
                   alt="AirEcho notification confirming two received files"
                   width={419}
                   height={116}
+                  unoptimized
                 />
               </div>
 
@@ -275,20 +308,21 @@ export default function Page() {
         >
           <div className="promise-content container">
             <p>Made for the devices you already use.</p>
-            <div className="promise-items">
-              <span>
-                <Wifi aria-hidden="true" />
-                Same Wi-Fi
-              </span>
-              <span>
-                <LockKeyhole aria-hidden="true" />
-                No account
-              </span>
-              <span>
-                <File aria-hidden="true" />
-                Text and files
-              </span>
-            </div>
+            <ul className="promise-items">
+              {supportedPlatforms.map(({ name, logo }) => (
+                <li key={name}>
+                  <Image
+                    className="promise-logo"
+                    src={logo}
+                    alt=""
+                    width={72}
+                    height={72}
+                  />
+                  {name}
+                </li>
+              ))}
+              <li className="promise-soon">Windows &amp; iOS soon</li>
+            </ul>
           </div>
         </section>
 
@@ -328,10 +362,20 @@ export default function Page() {
                 AirEcho runs quietly in the background, ready for the moment you
                 need to move something.
               </p>
-              <Link className="text-link" href="#platforms">
+              <Link className="text-link" href="#downloads">
                 Find your version
                 <ArrowRight aria-hidden="true" />
               </Link>
+
+              <figure className="tray-preview">
+                <Image
+                  src="/assets/screenshots/tray-menu.png"
+                  alt="AirEcho tray menu with options to disable AirEcho, open settings, or quit"
+                  width={430}
+                  height={270}
+                />
+                <figcaption>Lives in your system tray</figcaption>
+              </figure>
             </div>
 
             <div className="steps-list">
@@ -362,32 +406,7 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="showcase-grid">
-              {showcaseDemos.map((demo) => (
-                <Card className="showcase-card" key={demo.video}>
-                  <CardHeader className="showcase-copy">
-                    <p className="showcase-label">{demo.label}</p>
-                    <CardTitle>{demo.title}</CardTitle>
-                    <CardDescription>{demo.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="showcase-media">
-                    <div className="showcase-device">
-                      <video
-                        aria-label={demo.alt}
-                        controls
-                        playsInline
-                        preload="none"
-                        poster={demo.poster}
-                        style={{ aspectRatio: demo.aspectRatio }}
-                      >
-                        <source src={demo.video} type="video/mp4" />
-                        Your browser does not support embedded videos.
-                      </video>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <ShowcasePlayer demos={showcaseDemos} />
           </div>
         </section>
 
@@ -415,32 +434,29 @@ export default function Page() {
             </div>
 
             <div className="platform-cards">
-              <Card className="platform-card">
-                <CardHeader>
-                  <span className="platform-icon">
-                    <Laptop aria-hidden="true" />
-                  </span>
-                  <CardTitle>Desktop</CardTitle>
-                  <CardDescription>Linux &amp; macOS</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>
-                    Clipboard sync, file sending, and a quiet tray presence.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="platform-card">
-                <CardHeader>
-                  <span className="platform-icon">
-                    <Smartphone aria-hidden="true" />
-                  </span>
-                  <CardTitle>Android</CardTitle>
-                  <CardDescription>Android 10 and newer</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>Quick Settings to receive. Share menu to send.</p>
-                </CardContent>
-              </Card>
+              {platformCards.map(
+                ({ icon: Icon, title, description, items }) => (
+                  <Card className="platform-card" key={title}>
+                    <CardHeader>
+                      <span className="platform-icon">
+                        <Icon aria-hidden="true" />
+                      </span>
+                      <CardTitle>{title}</CardTitle>
+                      <CardDescription>{description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="platform-list">
+                        {items.map((item) => (
+                          <li key={item}>
+                            <Check aria-hidden="true" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                )
+              )}
             </div>
           </div>
         </section>
@@ -455,13 +471,24 @@ export default function Page() {
             <p>
               Start with the same Wi-Fi. Let AirEcho take care of the handoff.
             </p>
-            <a
-              className={buttonVariants({ variant: "secondary", size: "lg" })}
-              href="#downloads"
-            >
-              Choose your download
-              <ArrowDownToLine data-icon="inline-end" />
-            </a>
+            <div className="closing-actions">
+              <a
+                className={buttonVariants({ variant: "secondary", size: "lg" })}
+                href="#downloads"
+              >
+                Choose your download
+                <ArrowDownToLine data-icon="inline-end" />
+              </a>
+              <a
+                className="closing-link"
+                href={sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View source on GitHub
+                <ArrowUpRight aria-hidden="true" />
+              </a>
+            </div>
           </div>
         </section>
       </main>
@@ -478,6 +505,10 @@ export default function Page() {
           </Link>
           <p>Small transfers. No extra accounts.</p>
           <Separator className="footer-separator" />
+          <a href={`${sourceUrl}/releases`} target="_blank" rel="noreferrer">
+            Releases
+            <ArrowUpRight aria-hidden="true" />
+          </a>
           <a href={sourceUrl} target="_blank" rel="noreferrer">
             Open source
             <ArrowUpRight aria-hidden="true" />
