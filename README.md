@@ -1,7 +1,7 @@
 # AirEcho website
 
-The AirEcho website introduces the app and links to current Linux, macOS, and
-Android downloads. Download links and counts are retrieved from the public
+The AirEcho website introduces the app and links to current Linux, macOS,
+Android, and iOS downloads. Download links and counts are retrieved from the public
 GitHub Releases API.
 
 ## Development

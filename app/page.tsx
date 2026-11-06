@@ -5,10 +5,11 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
-  Clipboard,
-  FolderDown,
+  CloudOff,
+  FileImage,
+  FileText,
+  FolderOpen,
   Laptop,
-  LockKeyhole,
   Network,
   Smartphone,
   Wifi,
@@ -17,7 +18,9 @@ import {
 
 import { buttonVariants } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ClipboardClip } from "@/components/clipboard-clip"
 import { DownloadSection } from "@/components/download-section"
+import { HeroNotification } from "@/components/hero-notification"
 import { ShowcasePlayer, type ShowcaseDemo } from "@/components/showcase-player"
 import {
   Card,
@@ -32,32 +35,102 @@ const sourceUrl = "https://github.com/tl2a/airecho-desktop"
 
 const features = [
   {
-    icon: Clipboard,
+    visual: "clipboard",
     title: "Your clipboard, in sync",
     description:
-      "Copy text on one device and pick it up on another. No message-to-yourself ritual required.",
+      "Copy text on one device and pick it up on another. No message‑to‑yourself ritual required.",
+    link: { label: "See it in action", href: "#clipboard" },
   },
   {
-    icon: FolderDown,
+    visual: "files",
     title: "Files without the detour",
     description:
       "Send from your desktop or share from Android. Received files go straight to an AirEcho folder.",
   },
   {
-    icon: LockKeyhole,
+    visual: "local",
     title: "Local by default",
     description:
       "On the same network, transfers use local mode. No account, AirEcho cloud storage, or cable.",
   },
-]
+] as const
+
+// Small HTML illustrations for the feature cards; decorative only.
+function FeatureVisual({
+  visual,
+}: {
+  visual: (typeof features)[number]["visual"]
+}) {
+  if (visual === "clipboard") {
+    return (
+      <div className="feature-visual fv-clipboard" aria-hidden="true">
+        <span className="fv-row">
+          <Laptop />
+          <span className="fv-label">Copied</span>
+          <span className="fv-text">“See you at 6?”</span>
+        </span>
+        <span className="fv-link" />
+        <span className="fv-row fv-row-done">
+          <Smartphone />
+          <span className="fv-label">Ready to paste</span>
+          <Check className="fv-check" />
+        </span>
+      </div>
+    )
+  }
+
+  if (visual === "files") {
+    return (
+      <div className="feature-visual fv-files" aria-hidden="true">
+        <span className="fv-window">
+          <span className="fv-window-bar">
+            <FolderOpen />
+            AirEcho
+          </span>
+          <span className="fv-file">
+            <FileImage />
+            photo.jpg
+            <Check className="fv-check" />
+          </span>
+          <span className="fv-file">
+            <FileText />
+            notes.pdf
+            <Check className="fv-check" />
+          </span>
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="feature-visual fv-local" aria-hidden="true">
+      <span className="fv-path">
+        <span className="fv-node">
+          <Laptop />
+        </span>
+        <span className="fv-wire">
+          <Wifi />
+        </span>
+        <span className="fv-node">
+          <Smartphone />
+        </span>
+      </span>
+      <span className="fv-nocloud">
+        <CloudOff />
+        No cloud
+      </span>
+    </div>
+  )
+}
 
 const steps = [
   {
     number: "01",
     title: "Join the same network",
     description:
-      "Connect your devices to the same Wi-Fi. AirEcho uses local network mode by default.",
+      "Connect your devices to the same Wi‑Fi. AirEcho uses local network mode by default.",
     icon: Wifi,
+    details: ["Same Wi‑Fi", "Local mode"],
   },
   {
     number: "02",
@@ -65,6 +138,7 @@ const steps = [
     description:
       "Copy text, send a file from your desktop, or choose AirEcho from Android’s share menu.",
     icon: Zap,
+    details: ["Copy text", "Send a file", "Share menu"],
   },
   {
     number: "03",
@@ -72,13 +146,21 @@ const steps = [
     description:
       "Text arrives on the clipboard. Files are saved in a dedicated AirEcho folder.",
     icon: ArrowDownToLine,
+    details: ["Clipboard", "~/Downloads/AirEcho"],
   },
+]
+
+const clipboardSteps = [
+  "Copy text on one device.",
+  "AirEcho sends it over your Wi‑Fi.",
+  "Paste on the other. It’s already on the clipboard.",
 ]
 
 const supportedPlatforms = [
   { name: "Linux", logo: "/assets/platforms/linux.png" },
   { name: "macOS", logo: "/assets/platforms/macos.png" },
   { name: "Android", logo: "/assets/platforms/android.png" },
+  { name: "iOS", logo: "/assets/platforms/ios.png" },
 ]
 
 const platformCards = [
@@ -277,15 +359,7 @@ export default function Page() {
                 </span>
               </div>
 
-              <div className="transfer-float">
-                <Image
-                  src="/assets/screenshots/files-received.png"
-                  alt="AirEcho notification confirming two received files"
-                  width={419}
-                  height={116}
-                  unoptimized
-                />
-              </div>
+              <HeroNotification />
 
               <div className="visual-caption">
                 <span className="caption-device">
@@ -321,7 +395,7 @@ export default function Page() {
                   {name}
                 </li>
               ))}
-              <li className="promise-soon">Windows &amp; iOS soon</li>
+              <li className="promise-soon">Windows soon</li>
             </ul>
           </div>
         </section>
@@ -338,18 +412,53 @@ export default function Page() {
             </div>
 
             <div className="feature-grid">
-              {features.map(({ icon: Icon, title, description }) => (
-                <Card className="feature-card" key={title}>
+              {features.map((feature) => (
+                <Card className="feature-card" key={feature.title}>
+                  <FeatureVisual visual={feature.visual} />
                   <CardHeader>
-                    <span className="feature-icon">
-                      <Icon aria-hidden="true" />
-                    </span>
-                    <CardTitle>{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
+                    <CardTitle>{feature.title}</CardTitle>
+                    <CardDescription>{feature.description}</CardDescription>
+                    {"link" in feature && (
+                      <Link className="feature-link" href={feature.link.href}>
+                        {feature.link.label}
+                        <ArrowRight aria-hidden="true" />
+                      </Link>
+                    )}
                   </CardHeader>
                 </Card>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="clipboard-section" id="clipboard">
+          <div className="clipboard-panel container">
+            <div className="clipboard-copy">
+              <p className="section-kicker">Clipboard sync</p>
+              <h2>Copied there. Ready here.</h2>
+              <p>
+                When text arrives, AirEcho puts it straight on your clipboard.
+                No app to open, nothing to tap. Just paste.
+              </p>
+
+              <ol className="clipboard-steps">
+                {clipboardSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+
+              <figure className="mac-tile">
+                <Image
+                  src="/assets/screenshots/text-received-notification.png"
+                  alt="macOS notification from AirEcho: Text Received, received text copied to clipboard"
+                  width={749}
+                  height={158}
+                />
+                <figcaption>Works both ways, here landing on a Mac.</figcaption>
+              </figure>
+            </div>
+
+            <ClipboardClip />
           </div>
         </section>
 
@@ -379,18 +488,32 @@ export default function Page() {
             </div>
 
             <div className="steps-list">
-              {steps.map(({ number, title, description, icon: Icon }) => (
-                <article className="step-item" key={number}>
-                  <div className="step-icon">
-                    <Icon aria-hidden="true" />
-                  </div>
-                  <div className="step-copy">
-                    <span className="step-number">{number}</span>
-                    <h3>{title}</h3>
-                    <p>{description}</p>
-                  </div>
-                </article>
-              ))}
+              {steps.map(
+                ({ number, title, description, icon: Icon, details }) => (
+                  <article className="step-item" key={number}>
+                    <div className="step-icon">
+                      <Icon aria-hidden="true" />
+                    </div>
+                    <div className="step-copy">
+                      <span className="step-number">{number}</span>
+                      <h3>{title}</h3>
+                      <p>{description}</p>
+                      <ul className="step-details">
+                        {details.map((detail) => (
+                          <li
+                            key={detail}
+                            className={
+                              detail.startsWith("~/") ? "step-path" : undefined
+                            }
+                          >
+                            {detail}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </article>
+                )
+              )}
             </div>
           </div>
         </section>
@@ -418,9 +541,9 @@ export default function Page() {
               <p className="section-kicker">Your devices, together</p>
               <h2>A familiar fit on every screen.</h2>
               <p>
-                AirEcho is available on Linux and macOS desktop, plus Android.
-                Keep it in your system tray or Android Quick Settings and get on
-                with your day.
+                AirEcho is available on Linux and macOS desktop, plus Android
+                and iOS. Keep it in your system tray or Android Quick Settings
+                and get on with your day.
               </p>
               <a
                 className="platform-link"

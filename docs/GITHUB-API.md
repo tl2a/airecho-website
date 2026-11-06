@@ -59,12 +59,26 @@ The UI matches filenames from the latest stable release:
 | macOS Intel | Filename contains `x86_64` and ends in `.dmg` |
 | macOS Apple Silicon | Filename contains `aarch64` or `arm64` and ends in `.dmg` |
 | Android | First asset ending in `.apk` |
+| iOS | First asset ending in `.ipa` |
 
-Windows and iOS are labeled “Coming soon” and do not have asset matching.
+Windows is labeled “Coming soon” and does not have asset matching.
 
-The Android card displays the app version extracted from the APK filename, for
-example `AirEcho-v1.3.0.apk` becomes `v1.3.0`. It says “Tested on Android 10+”;
-do not infer the tested Android version from the desktop release tag.
+The Android and iOS cards display the app version extracted from the filename,
+for example `AirEcho-v1.3.0.apk` becomes `v1.3.0` and
+`AirEcho-v2.0.0-unsigned.ipa` becomes `v2.0.0` (an `-unsigned` suffix is
+ignored). The Android card says “Tested on Android 10+”; do not infer mobile
+versions from the desktop release tag.
+
+## Install prerequisites
+
+The section below the platform cards explains what each build needs. Update it
+when these requirements change:
+
+- **Desktop (Linux, macOS, Windows):** requires
+  [croc](https://github.com/schollz/croc#install). Commands shown: `brew install
+  croc`, `curl https://getcroc.com | bash`, and `scoop install croc`.
+- **iOS:** the IPA is unsigned and must be sideloaded with a tool such as
+  Sideloadly or AltStore, using the visitor's Apple ID.
 
 When publishing releases, keep the platform and architecture identifiers in
 asset names consistent with these matching rules. The direct URLs are GitHub's
@@ -85,8 +99,9 @@ environment files. Do not add a token to the browser's request to `/api/download
 
 - **No download button for a platform:** check that the latest stable release
   has an asset whose filename matches the platform patterns above.
-- **Android version is missing:** check that the APK ends in `.apk` and contains
-  a version such as `v1.3.0` immediately before the extension.
+- **Android or iOS version is missing:** check that the file ends in `.apk` or
+  `.ipa` and contains a version such as `v1.3.0` immediately before the
+  extension (or before `-unsigned.ipa`).
 - **GitHub returns an error:** verify that the public releases endpoint is
   available and, if configured, that the server-side token is valid and within
   its rate limit.
